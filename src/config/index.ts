@@ -3,7 +3,7 @@ config();
 
 const Config = {
     PORT: process.env.PORT || 3000,
-    NODE_ENV: process.env.NODE_ENV || 'development',
+    NODE_ENV: process.env.NODE_ENV,
     WHITELIST_ORIGINS: ['https://www.postman.com/yasira/workspace/blog-api',]
     // 'https://docs.blog-api.com'
 }

@@ -1,0 +1,13 @@
+1. enable json, url encoded
+enable cookie-parser compression helmet
+
+install cookie-parser types -D @types/cookie-parser @types/compression
+
+3. install express-rate-limit
+
+set up a rate limiter config
+set up a root route
+
+ended on root layout
+
+completion date: complete project in november
