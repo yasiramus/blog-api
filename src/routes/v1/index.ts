@@ -8,7 +8,8 @@ router.get('/', (_req, res) => {
         message: "API is live",
         status: 'ok',
         version: '1.0.0',
-        docs: 'https://docs.blog-api.com'
+        docs: 'https://docs.blog-api.com',
+        timeStamp: new Date().toISOString()
     })
 })
 

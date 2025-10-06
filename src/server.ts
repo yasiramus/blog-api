@@ -12,8 +12,9 @@ import cookieParser from 'cookie-parser';
 
 /**custom modules */
 import config from '@/config';
-import router from '@/routes/v1';
+import v1Routes from '@/routes/v1';
 import limiter from '@/lib/express_rate_limit';
+import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongoose';
 
 /**types */
 import { CorsOptions } from 'cors';
@@ -57,12 +58,16 @@ app.use(helmet()) //enhance security by setting various HTTP headers
  */
 app.use(limiter);
 
-/**routes */
-app.use(router);
-
+/**
+ *
+ */
 (async () => {
 
     try {
+
+        await connectToDatabase();
+        /**routes */
+        app.use('/api/v1', v1Routes);
         app.listen(config.PORT, () => {
             console.log(`Server running: http://localhost:${config.PORT}`);
         })
@@ -72,3 +77,27 @@ app.use(router);
     }
 }
 )();
+
+/**
+ * handle server shutdown gracefully
+ */
+
+const handleServerShutdown = async () => {
+    try {
+        await disconnectFromDatabase();
+        console.log('Shutting down server gracefully...');
+        process.exit(0)
+    } catch (error) {
+        console.error('Error during server shutdown:', error);
+
+
+    }
+}
+
+/**
+ * listen for termination signals
+process.on('SIGINT', handleServerShutdown);
+process.on('SIGTERM', handleServerShutdown);
+*/
+process.on('SIGTERM', handleServerShutdown);
+process.on('SIGINT', handleServerShutdown);

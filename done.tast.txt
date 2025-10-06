@@ -9,5 +9,10 @@ set up a rate limiter config
 set up a root route
 
 ended on root layout
+root route setup done
+next handle server shutdown done
+mongodb setup npm install mongoose
+done with db setup
+next setup winston
 
 completion date: complete project in november
