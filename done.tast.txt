@@ -13,6 +13,11 @@ root route setup done
 next handle server shutdown done
 mongodb setup npm install mongoose
 done with db setup
-next setup winston
+next setup winston  for logging library
+change from using console.log to using the custom logger defined
+
+07/10/25
+register a user
+
 
 completion date: complete project in november

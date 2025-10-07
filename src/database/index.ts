@@ -1,9 +1,10 @@
-import mongoose from "mongoose";
+import { connect, disconnect } from "mongoose";
 
 import Config from "@/config";
 
 /**types */
 import type { ConnectOptions } from "mongoose";
+import { logger } from "@/lib/winston";
 
 /**client option*/
 const clientOptions: ConnectOptions = {
@@ -16,6 +17,11 @@ const clientOptions: ConnectOptions = {
     }
 }
 
+const Options = {
+    uri: Config.CONNECTION_STRING?.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
+    options: clientOptions
+}
+
 /**establish connection using mongoose */
 export const connectToDatabase = async (): Promise<void> => {
     if (!Config.CONNECTION_STRING) {
@@ -23,33 +29,26 @@ export const connectToDatabase = async (): Promise<void> => {
     }
 
     try {
-        await mongoose.connect(Config.CONNECTION_STRING, clientOptions);
-        console.log('Connected to MongoDB database successfully', {
-            uri: Config.CONNECTION_STRING.replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
-            options: clientOptions
-        });
+        await connect(Config.CONNECTION_STRING, clientOptions);
+        logger.info('Connected to MongoDB database successfully', Options);
 
     } catch (error) {
         if (error instanceof Error) {
             throw error
         }
-        console.error('Error connecting to MongoDB database:', error);
+        logger.error('Error connecting to MongoDB database:', error);
     }
 }
 
 /**disconnect from the database */
 export const disconnectFromDatabase = async (): Promise<void> => {
     try {
-        await mongoose.disconnect();
-        console.log('Disconnected from MongoDB database successfully', {
-            uri: Config.CONNECTION_STRING,
-            options: clientOptions
-        });
+        await disconnect();
+        logger.info('Disconnected from MongoDB database successfully', Options);
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
         }
-        console.error('Error disconnecting from the database:', error);
-
+        logger.error('Error disconnecting from the database:', error);
     }
 }
