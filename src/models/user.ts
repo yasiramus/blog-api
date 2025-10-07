@@ -69,7 +69,7 @@ const userSchema = new Schema<IUser>({
     },
     role: {
         type: String,
-        // required: [true, 'Role is required'],
+        // The role field is not required; it defaults to 'user'
         enum: {
             values: ['admin', 'user'],
             message: '{VALUE} is not supported'

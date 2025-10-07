@@ -15,7 +15,7 @@ import config from '@/config';
 import v1Routes from '@/routes/v1';
 import { logger } from '@/lib/winston';
 import limiter from '@/lib/express_rate_limit';
-import { connectToDatabase, disconnectFromDatabase } from '@/database';
+import { connectToDatabase, disconnectFromDatabase } from '@/database/index';
 
 /**types */
 import { CorsOptions } from 'cors';
@@ -28,7 +28,7 @@ const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
         if (config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
             callback(null, true)
-            console.log(`CORS: ${origin} allowed`);
+            logger.info(`CORS: ${origin} allowed`);
         } else {
             //reject request from non-whitelisted origin
             callback(new Error(`CORS error: ${origin} is not allowed`), false)

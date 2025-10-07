@@ -18,7 +18,9 @@ const clientOptions: ConnectOptions = {
 }
 
 const Options = {
-    uri: Config.CONNECTION_STRING?.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
+    uri: Config.CONNECTION_STRING
+        ? Config.CONNECTION_STRING.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2')
+        : '',
     options: clientOptions
 }
 
