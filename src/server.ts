@@ -13,8 +13,9 @@ import cookieParser from 'cookie-parser';
 /**custom modules */
 import config from '@/config';
 import v1Routes from '@/routes/v1';
+import { logger } from '@/lib/winston';
 import limiter from '@/lib/express_rate_limit';
-import { connectToDatabase, disconnectFromDatabase } from '@/lib/mongoose';
+import { connectToDatabase, disconnectFromDatabase } from '@/database/index';
 
 /**types */
 import { CorsOptions } from 'cors';
@@ -27,11 +28,11 @@ const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
         if (config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
             callback(null, true)
-            console.log(`CORS: ${origin} allowed`);
+            logger.info(`CORS: ${origin} allowed`);
         } else {
             //reject request from non-whitelisted origin
             callback(new Error(`CORS error: ${origin} is not allowed`), false)
-            console.log(`CORS error: ${origin} is not allowed`);
+            logger.warn(`CORS error: ${origin} is not allowed`);
         }
     }
 };
@@ -58,21 +59,16 @@ app.use(helmet()) //enhance security by setting various HTTP headers
  */
 app.use(limiter);
 
-/**
- *
- */
 (async () => {
-
     try {
-
         await connectToDatabase();
         /**routes */
         app.use('/api/v1', v1Routes);
         app.listen(config.PORT, () => {
-            console.log(`Server running: http://localhost:${config.PORT}`);
+            logger.info(`Server running: http://localhost:${config.PORT}`);
         })
     } catch (error) {
-        console.error('Failed to start server:', error);
+        logger.error('Failed to start server:', error);
         if (process.env.NODE_ENV !== 'production') return process.exit(1);
     }
 }
@@ -81,23 +77,18 @@ app.use(limiter);
 /**
  * handle server shutdown gracefully
  */
-
 const handleServerShutdown = async () => {
     try {
         await disconnectFromDatabase();
-        console.log('Shutting down server gracefully...');
+        logger.warn('Server shutting down...');
         process.exit(0)
     } catch (error) {
-        console.error('Error during server shutdown:', error);
-
-
+        logger.error('Error during server shutdown:', error);
     }
 }
 
 /**
- * listen for termination signals
-process.on('SIGINT', handleServerShutdown);
-process.on('SIGTERM', handleServerShutdown);
+*listen for termination signals
 */
 process.on('SIGTERM', handleServerShutdown);
 process.on('SIGINT', handleServerShutdown);
