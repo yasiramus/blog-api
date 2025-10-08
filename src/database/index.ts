@@ -1,10 +1,11 @@
 import { connect, disconnect } from "mongoose";
 
+/**custom module */
+import { logger } from "@/lib/winston";
 import Config from "@/config";
 
 /**types */
 import type { ConnectOptions } from "mongoose";
-import { logger } from "@/lib/winston";
 
 /**client option*/
 const clientOptions: ConnectOptions = {
@@ -17,13 +18,6 @@ const clientOptions: ConnectOptions = {
     }
 }
 
-const Options = {
-    uri: Config.CONNECTION_STRING
-        ? Config.CONNECTION_STRING.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2')
-        : '',
-    options: clientOptions
-}
-
 /**establish connection using mongoose */
 export const connectToDatabase = async (): Promise<void> => {
     if (!Config.CONNECTION_STRING) {
@@ -32,6 +26,12 @@ export const connectToDatabase = async (): Promise<void> => {
 
     try {
         await connect(Config.CONNECTION_STRING, clientOptions);
+
+        const Options = {
+            uri: Config.CONNECTION_STRING.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
+            options: clientOptions
+        }
+
         logger.info('Connected to MongoDB database successfully', Options);
 
     } catch (error) {
@@ -46,7 +46,7 @@ export const connectToDatabase = async (): Promise<void> => {
 export const disconnectFromDatabase = async (): Promise<void> => {
     try {
         await disconnect();
-        logger.info('Disconnected from MongoDB database successfully', Options);
+        logger.info('Disconnected from MongoDB database successfully');
     } catch (error) {
         if (error instanceof Error) {
             throw new Error(error.message);
