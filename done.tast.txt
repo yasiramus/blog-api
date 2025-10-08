@@ -19,5 +19,41 @@ change from using console.log to using the custom logger defined
 07/10/25
 register a user
 
+08/10/25
+focus on business logic within the controller
+
+generated a  random user name
+
+created a user
+install json web token and it types
+
+
+generate the access secret key within the terminal
+NODE
+Welcome to Node.js v22.20.0.
+Type ".help" for more information.
+> const crypto = require('crypto')
+undefined
+> crypto.randomBytes(16).toString('hex)
+crypto.randomBytes(16).toString('hex)
+                                ^^^^^
+
+Uncaught SyntaxError: Invalid or unexpected token
+> crypto.randomBytes(16).toString('hex')
+'08634f890b5563ff8eccda5e42e206eb'
+>
+> crypto.randomBytes(16).toString('hex')
+'2ad98d66c2365454ecb151f2991fd3b8'
+> crypto.randomBytes(16).toString('hex')
+'5a271000b5bced5c22656528ed952b0b'
+
+next task password hashing in user model
+
+express validator
+user registration
+input validation
+error middle ware
+generate a rand user, access and refresh token
+refresh token saved in db
 
 completion date: complete project in november
