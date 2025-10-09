@@ -5,12 +5,12 @@ import { logger } from "@/lib/winston";
 import Config from "@/config";
 
 /**models */
-import Token from "@/models/token";
 import User from "@/models/user";
 
 /**types */
 import type { Request, Response } from "express";
 import type { IUser } from "@/models/user";
+import { saveOrUpdateToken } from "@/services/tokenService";
 
 type UserData = Pick<IUser, 'email' | 'password' | 'role'>;
 
@@ -27,7 +27,8 @@ const register = async (req: Request, res: Response): Promise<void> => {
 
     try {
         //generate user name
-        const username = await generateUsername(); logger.info(`Generated username: ${username}`);
+        const username = await generateUsername();
+        logger.info(`Generated username: ${username}`);
 
         const newUser = await User.create({
             username, email, password, role
@@ -35,17 +36,12 @@ const register = async (req: Request, res: Response): Promise<void> => {
 
         //generate access and refresh token for new users
         const accessToken = generateAccessToken(newUser._id);
-        const refreshToken = generateRefreshToken(newUser._id);
 
         //store refresh token in db
-        await Token.create({ token: refreshToken, userId: newUser._id });
-        logger.info('Refresh token created and stored in database for user', {
-            userId: newUser._id,
-            token: refreshToken
-        });
+        let tokenRecord = await saveOrUpdateToken(newUser._id)
 
         //set refresh token in cookie
-        res.cookie('refreshToken', refreshToken, {
+        res.cookie('refreshToken', tokenRecord.token, {
             httpOnly: true,
             secure: Config.NODE_ENV === 'production',
             sameSite: 'strict',

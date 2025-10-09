@@ -1,6 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 
-interface IToken {
+export interface IToken {
     token: string;
     userId: Types.ObjectId
 }

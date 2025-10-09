@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
 import bcrypt from 'bcrypt';
 
@@ -18,7 +18,8 @@ export interface IUser {
         youtube?: string;
         linkedin?: string;
         tiktok?: string
-    }
+    };
+    matchPassword(enteredPassword: string): Promise<boolean>;
 };
 
 //URL field with custom messages
@@ -98,7 +99,14 @@ userSchema.pre('save', async function (next) {
     //hash password
     this.password = await bcrypt.hash(this.password, 10);
     next();
-})
+});
+
+// Custom method for password comparison
+userSchema.methods.matchPassword = async function (
+    enteredPassword: string
+): Promise<boolean> {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const User = model<IUser>('User', userSchema);
 

@@ -54,6 +54,9 @@ user registration
 input validation
 error middle ware
 generate a rand user, access and refresh token
-refresh token saved in db
+refresh token saved in
+
+09/10/25
+focus on user login > routes > controller
 
 completion date: complete project in november

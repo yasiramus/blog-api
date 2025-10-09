@@ -1,6 +1,7 @@
 import { body, ValidationChain } from "express-validator";
 
 import User from "@/models/user";
+import { passwordMatch } from "@/services/passwordMatch";
 
 /**
  * Shared validators
@@ -14,15 +15,19 @@ export const emailValidator = (checkUniqueness = false): ValidationChain => {
         .isLength({ max: 50 }).withMessage("Email must be at most 50 characters long")
         .isEmail().withMessage("Invalid email address");
 
-    if (checkUniqueness) {
-        chain.custom(async (value) => {
-            value.toLowerCase()
-            const userExists = await User.exists({ email: value });
+    chain.custom(async (value) => {
+        value.toLowerCase()
+        const userExists = await User.exists({ email: value });
+        if (checkUniqueness) {
             if (userExists) {
                 throw new Error("Account is already registered");
             }
-        });
-    }
+        } else {
+            if (!userExists) {
+                throw new Error("User email or password is invalid");
+            }
+        }
+    });
 
     return chain;
 };
@@ -62,6 +67,6 @@ export const registerValidation = [
 
 // Login validator
 export const loginValidation = [
-    emailValidator(false),
-    passwordValidator(false)
+    emailValidator(),
+    passwordValidator(true).custom(passwordMatch)
 ];
