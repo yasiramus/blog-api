@@ -19,8 +19,7 @@ if (Config.NODE_ENV !== 'production') {
                 align(),//align log messages
                 printf(({ timestamp, level, message, ...meta }) => {
                     const metaString = Object.keys(meta).length ? `\n${JSON.stringify(meta)}` : '';
-
-                    return `${timestamp} [${level.toUpperCase()}]: ${message}${metaString}`;
+                    return `${timestamp} [${level}]:${message}${metaString}`;
                 })
             )
         })

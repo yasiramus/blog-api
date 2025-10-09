@@ -28,7 +28,6 @@ const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
         if (config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
             callback(null, true)
-            logger.info(`CORS: ${origin} allowed`);
         } else {
             //reject request from non-whitelisted origin
             callback(new Error(`CORS error: ${origin} is not allowed`), false)

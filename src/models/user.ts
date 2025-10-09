@@ -1,4 +1,6 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Document } from "mongoose";
+
+import bcrypt from 'bcrypt';
 
 /**type */
 export interface IUser {
@@ -16,7 +18,8 @@ export interface IUser {
         youtube?: string;
         linkedin?: string;
         tiktok?: string
-    }
+    };
+    matchPassword(enteredPassword: string): Promise<boolean>;
 };
 
 //URL field with custom messages
@@ -47,7 +50,7 @@ const userSchema = new Schema<IUser>({
         required: [true, 'Username is required'],
         maxLength: [20, 'Username cannot exceed 20 characters'],
         unique: [true, 'Username must be unique'],
-        set: (v: string) => v.toLowerCase()
+        lowercase: true,
     },
     email: {
         type: String,
@@ -63,13 +66,11 @@ const userSchema = new Schema<IUser>({
     },
     password: {
         type: String,
-        trim: true,
         required: [true, 'Password is required'],
         select: false
     },
     role: {
         type: String,
-        // The role field is not required; it defaults to 'user'
         enum: {
             values: ['admin', 'user'],
             message: '{VALUE} is not supported'
@@ -89,9 +90,23 @@ const userSchema = new Schema<IUser>({
     { timestamps: true }
 );
 
-// Indexes for performance
-userSchema.index({ username: 1 });
-userSchema.index({ email: 1 });
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) {
+        next();
+        return;
+    }
+
+    //hash password
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+});
+
+// Custom method for password comparison
+userSchema.methods.matchPassword = async function (
+    enteredPassword: string
+): Promise<boolean> {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
 
 const User = model<IUser>('User', userSchema);
 
