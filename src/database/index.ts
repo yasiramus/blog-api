@@ -26,13 +26,12 @@ export const connectToDatabase = async (): Promise<void> => {
 
     try {
         await connect(Config.CONNECTION_STRING, clientOptions);
+        // const Options = {
+        //     uri: Config.CONNECTION_STRING.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
+        //     options: clientOptions
+        // }
 
-        const Options = {
-            uri: Config.CONNECTION_STRING.toString().replace(/(mongodb\+srv:\/\/.+?:).+?(@.+)/, '$1****$2'),
-            options: clientOptions
-        }
-
-        logger.info('Connected to MongoDB database successfully', Options);
+        logger.info('Connected to MongoDB database successfully');
 
     } catch (error) {
         if (error instanceof Error) {

@@ -26,7 +26,7 @@ const app = express();
 /**cors configure */
 const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-        if (config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
+        if (!origin || config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
             callback(null, true)
         } else {
             //reject request from non-whitelisted origin
