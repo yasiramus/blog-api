@@ -1,4 +1,4 @@
-import { body, ValidationChain } from "express-validator";
+import { body, ValidationChain, cookie } from "express-validator";
 
 import User from "@/models/user";
 import { passwordMatch } from "@/services/passwordMatch";
@@ -70,3 +70,7 @@ export const loginValidation = [
     emailValidator(),
     passwordValidator(true).custom(passwordMatch)
 ];
+
+//Refresh validator
+export const refreshTokenValidation = cookie('refreshToken').notEmpty().withMessage('Refresh token is required').isJWT()
+    .withMessage('Invalid refresh token');

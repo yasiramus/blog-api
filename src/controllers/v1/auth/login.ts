@@ -1,7 +1,10 @@
 /** custom modules */
-import { generateAccessToken, generateRefreshToken } from "@/lib/jwt";
+import { generateAccessToken } from "@/lib/jwt";
 import { logger } from "@/lib/winston";
 import Config from "@/config";
+
+/**service */
+import { saveOrUpdateToken } from "@/services/tokenService";
 
 /**models */
 import User from "@/models/user";
@@ -9,7 +12,6 @@ import User from "@/models/user";
 /**types */
 import type { Request, Response } from "express";
 import { IUser } from "@/models/user";
-import { saveOrUpdateToken } from "@/services/tokenService";
 
 type UserData = Pick<IUser, 'email' | 'password'>;
 
@@ -48,7 +50,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
             accessToken
         })
 
-        logger.info('User login successfully', user._id);
+        logger.info('User login successfully', { user: user._id });
 
     } catch (error) {
         res.status(500).json({ code: 'ServerError', message: 'Internal server error' });

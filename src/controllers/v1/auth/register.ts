@@ -1,8 +1,11 @@
 /***custom module */
-import { generateAccessToken, generateRefreshToken } from "@/lib/jwt";
+import { generateAccessToken } from "@/lib/jwt";
 import { generateUsername } from "@/utilities";
 import { logger } from "@/lib/winston";
 import Config from "@/config";
+
+/**service */
+import { saveOrUpdateToken } from "@/services/tokenService";
 
 /**models */
 import User from "@/models/user";
@@ -10,7 +13,6 @@ import User from "@/models/user";
 /**types */
 import type { Request, Response } from "express";
 import type { IUser } from "@/models/user";
-import { saveOrUpdateToken } from "@/services/tokenService";
 
 type UserData = Pick<IUser, 'email' | 'password' | 'role'>;
 
@@ -27,7 +29,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
 
     try {
         //generate user name
-        const username = await generateUsername();
+        const username = generateUsername();
         logger.info(`Generated username: ${username}`);
 
         const newUser = await User.create({
