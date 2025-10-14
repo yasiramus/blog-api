@@ -2,15 +2,12 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "baseUrl": "./",
-    "ignoreDeprecations": "6.0",
+    // "baseUrl": "./",
+    // "ignoreDeprecations": "6.0",
     "module": "commonjs",
     "target": "es6",
     // For nodejs:
-    "lib": [
-      "esnext",
-      "DOM"
-    ],
+    "lib": ["esnext", "DOM"],
     "types": [
       // "node",
       "express"
@@ -30,18 +27,10 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["./src/*"]
     },
-    "typeRoots": [
-      "./src/@types"
-    ]
+    "typeRoots": ["./src/@types"]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

@@ -68,4 +68,7 @@ created a global express @types directory added the userId to the interface
 configure tsconfig to recognize that directory by the setting the typeRoots to the @types directory and change from using node for types to express
 added a cookie option utility
 
+14/10/25
+1. get the  current logged in user
+controller> route>
 complete project in november
