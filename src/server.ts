@@ -25,15 +25,19 @@ const app = express();
 
 /**cors configure */
 const corsOptions: CorsOptions = {
-    origin: (origin, callback) => {
-        if (!origin || config.NODE_ENV === 'development' || config.WHITELIST_ORIGINS.includes(origin!)) {
-            callback(null, true)
-        } else {
-            //reject request from non-whitelisted origin
-            callback(new Error(`CORS error: ${origin} is not allowed`), false)
-            logger.warn(`CORS error: ${origin} is not allowed`);
-        }
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      config.NODE_ENV === 'development' ||
+      config.WHITELIST_ORIGINS.includes(origin!)
+    ) {
+      callback(null, true);
+    } else {
+      //reject request from non-whitelisted origin
+      callback(new Error(`CORS error: ${origin} is not allowed`), false);
+      logger.warn(`CORS error: ${origin} is not allowed`);
     }
+  },
 };
 
 /**middlewares */
@@ -48,10 +52,12 @@ app.use(express.json());
  */
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); //parse cookies from request headers
-app.use(compression({
+app.use(
+  compression({
     threshold: 1024, //compress only responses greater than 1KB in size
-}))//reduce size of response body and increase the speed
-app.use(helmet()) //enhance security by setting various HTTP headers
+  }),
+); //reduce size of response body and increase the speed
+app.use(helmet()); //enhance security by setting various HTTP headers
 
 /**
  * prevent excessive requests from same IP and enhance security
@@ -59,35 +65,34 @@ app.use(helmet()) //enhance security by setting various HTTP headers
 app.use(limiter);
 
 (async () => {
-    try {
-        await connectToDatabase();
-        /**routes */
-        app.use('/api/v1', v1Routes);
-        app.listen(config.PORT, () => {
-            logger.info(`Server running: http://localhost:${config.PORT}`);
-        })
-    } catch (error) {
-        logger.error('Failed to start server:', error);
-        if (process.env.NODE_ENV !== 'production') return process.exit(1);
-    }
-}
-)();
+  try {
+    await connectToDatabase();
+    /**routes */
+    app.use('/api/v1', v1Routes);
+    app.listen(config.PORT, () => {
+      logger.info(`Server running: http://localhost:${config.PORT}`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server:', error);
+    if (process.env.NODE_ENV !== 'production') return process.exit(1);
+  }
+})();
 
 /**
  * handle server shutdown gracefully
  */
 const handleServerShutdown = async () => {
-    try {
-        await disconnectFromDatabase();
-        logger.warn('Server shutting down...');
-        process.exit(0)
-    } catch (error) {
-        logger.error('Error during server shutdown:', error);
-    }
-}
+  try {
+    await disconnectFromDatabase();
+    logger.warn('Server shutting down...');
+    process.exit(0);
+  } catch (error) {
+    logger.error('Error during server shutdown:', error);
+  }
+};
 
 /**
-*listen for termination signals
-*/
+ *listen for termination signals
+ */
 process.on('SIGTERM', handleServerShutdown);
 process.on('SIGINT', handleServerShutdown);
