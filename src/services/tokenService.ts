@@ -1,33 +1,33 @@
 /**custom module */
-import Token from "@/models/token";
-import { logger } from "@/lib/winston";
-import { generateRefreshToken } from "@/lib/jwt";
+import Token from '@/models/token';
+import { logger } from '@/lib/winston';
+import { generateRefreshToken } from '@/lib/jwt';
 
 /**types */
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
+import { UserRole } from '@/models/user';
 
-const findTokenByUserId = async (userId: Types.ObjectId) => {
-    return Token.findOne({ userId });
-};
+export const saveOrUpdateToken = async (
+  userId: Types.ObjectId,
+  role: UserRole,
+) => {
+  const refreshToken = generateRefreshToken(userId, role);
 
-export const saveOrUpdateToken = async (userId: Types.ObjectId) => {
-    let tokenRecord = await findTokenByUserId(userId);
+  try {
+    const existingToken = await Token.findOne({ userId });
+    const isNew = !existingToken;
 
-    const refreshToken = generateRefreshToken(userId);
+    const tokenRecord = await Token.findOneAndUpdate(
+      { userId },
+      { token: refreshToken },
+      { upsert: true, new: true },
+    );
 
-    if (!tokenRecord) {
-        tokenRecord = await Token.create({ token: refreshToken, userId });
-        logger.info("Refresh token created", { userId });
-    } else {
-        tokenRecord.token = refreshToken;
-        await tokenRecord.save();
-        logger.info("Refresh token updated", { userId });
-    }
-
+    logger.info(`Refresh token ${isNew ? 'created' : 'updated'}`, { userId });
     return tokenRecord;
+  } catch (error) {
+    const errMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Error saving/updating refresh token', errMessage);
+    throw error;
+  }
 };
-
-// export const deleteToken = async (userId: Types.ObjectId) => {
-//     await Token.deleteOne({ userId });
-//     logger.info("Refresh token deleted", { userId });
-// };
