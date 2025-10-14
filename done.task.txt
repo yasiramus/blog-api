@@ -59,4 +59,13 @@ refresh token saved in
 09/10/25
 focus on user login > routes > controller
 
-completion date: complete project in november
+13/10/25
+1. feat(auth): implement user logout and authentication middleware
+logout user <<route > authenticate middleware>
+ controller >>:
+2. create a middleware called authenticate
+created a global express @types directory added the userId to the interface
+configure tsconfig to recognize that directory by the setting the typeRoots to the @types directory and change from using node for types to express
+added a cookie option utility
+
+complete project in november

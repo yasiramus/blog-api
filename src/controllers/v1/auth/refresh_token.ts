@@ -6,17 +6,12 @@ import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "@
 /**models */
 import Token from "@/models/token";
 
-/**types */
-import type { CookieOptions, Request, Response } from "express";
-import { Types } from "mongoose";
+/**util */
+import { cookieOptions } from "@/utilities";
 
-const cookieOptions: CookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: 'strict',
-    // path: "/",
-    // maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-};
+/**types */
+import type { Request, Response } from "express";
+import { Types } from "mongoose";
 
 
 const refreshToken = async (req: Request, res: Response) => {
